@@ -1,7 +1,7 @@
 # OsmoVideoRenamer design
 
 **Date:** 2026-09-22
-**Status:** Approved by Charles (design discussion), pending spec review
+**Status:** Design approved by Charles; spec reviewed and approved 2026-09-22
 
 ## 1. Purpose
 
@@ -115,20 +115,25 @@ Videos are ordered by counter (sequence number), ascending. That is the sole sor
   `ArgumentException` explaining that the counter restarted or files from more than one
   card are mixed, and that they should be split into separate directories. This mirrors
   the GoPro tool's duplicate check and prevents silently interleaving two sessions.
-- If the counter order differs from the timestamp order, a warning is logged
-  ("sequence order differs from timestamp order; the camera clock may have changed").
-  The run continues in counter order.
+- Walking the videos in counter order, if any video's timestamp is earlier than the
+  previous video's timestamp, a warning is logged ("timestamps are not in sequence
+  order; the camera clock may have changed or the time zone may have been adjusted").
+  Equal timestamps, which split segments may share, do not trigger it. The run
+  continues in counter order.
 
 Each video receives a new index: `--starting-number` (default 1) for the first,
-increasing by one.
+increasing by one. A negative `--starting-number` aborts with an
+`ArgumentOutOfRangeException`; zero is allowed.
 
 ### 5.3 New names
 
 New base name: `{prefix}{index formatted to digit count}{suffix}`. The video keeps its
 original extension (`.MP4`, in whatever case it was found); each companion keeps its own.
 
-Digit count: `--digit-count` when given, otherwise the number of digits in the largest
-new index. If `--digit-count` is smaller than that, the run aborts with an
+Digit count: `--digit-count` when given, otherwise the number of decimal digits in the
+largest new index, computed as the length of its decimal string so that an index of 0
+yields one digit (the GoPro tool's base-10 logarithm is not used because it fails for
+0). If `--digit-count` is smaller than that, the run aborts with an
 `ArgumentOutOfRangeException` (same rule and message shape as the GoPro tool).
 
 ### 5.4 Companion files
@@ -194,7 +199,7 @@ RenameCommand.Rename(fileLocation, prefix, suffix, startingNumber, digitCount, d
 | `ConsoleWrapping.IConsoleWrapper` / `ConsoleWrapper` | `WriteLine`, `WriteErrorLine` over `Console`. | none |
 | `Directory.IVideoDirectory` / `VideoDirectory` | Verifies the directory exists; wraps each entry as `IDirectoryFile`. | `IFileSystem`, `IDirectoryFileFactory`, `ILogger` |
 | `Directory.IVideoDirectoryFactory` / `VideoDirectoryFactory` | Creates a `VideoDirectory` for a path, resolving dependencies from `IServiceProvider`. | `IServiceProvider` |
-| `File.Naming.DjiVideoFileName` | Static, pure. `TryParse(name, out DjiVideoFileName)` and `Parse(name)`; exposes `CaptureTimestamp` and `SequenceNumber`. Single source of truth for the pattern. | none |
+| `File.Naming.DjiVideoFileName` | Immutable record with static `TryParse(name, out DjiVideoFileName?)` and `Parse(name)`; instances expose `CaptureTimestamp` and `SequenceNumber`. The timestamp is parsed with format `yyyyMMddHHmmss` and `CultureInfo.InvariantCulture`. Single source of truth for the pattern. | none |
 | `File.DirectoryFiles.IDirectoryFile` / `DirectoryFile` | Any directory entry: `FileInfo`, `Name`, `BaseName`, `FileExtension`. | `IFileInfo` |
 | `File.DirectoryFiles.IDirectoryFileFactory` / `DirectoryFileFactory` | `Create(IFileInfo)`. | none |
 | `File.VideoFiles.IVideoFile` / `VideoFile` | A recognized DJI video: `IDirectoryFile` plus `SequenceNumber`, `CaptureTimestamp`, parsed eagerly in the constructor (throws `ArgumentException` for a non-DJI name). Copy constructor from `IVideoFile`. | `DjiVideoFileName` |
@@ -222,10 +227,11 @@ with three additions: `File.Naming`, `File.DirectoryFiles`, `File.CompanionFiles
 |-----------|--------|
 | Directory does not exist | `DirectoryNotFoundException` from `VideoDirectory` (logged Critical) |
 | No DJI videos | Message on stdout, exit 0 |
-| Repeated counter value | `ArgumentException` from `FileSort` |
-| Counter order differs from timestamp order | Warning logged, run continues |
+| Repeated counter value | `ArgumentException` from `FileSort` (logged Critical) |
+| Negative `--starting-number` | `ArgumentOutOfRangeException` from `FileSort` (logged Critical) |
+| Timestamp earlier than the previous one in counter order | Warning logged, run continues |
 | `--digit-count` too small | `ArgumentOutOfRangeException` from `FileRename` (logged Critical) |
-| Planned name duplicated or already present | `IOException` from `RenameCollisionChecker`, nothing renamed |
+| Planned name duplicated or already present | `IOException` from `RenameCollisionChecker` (logged Critical), nothing renamed |
 | `MoveTo` fails mid-run | Exception propagates; files already moved stay moved (same as GoPro) |
 
 ## 7. Testing
@@ -240,10 +246,12 @@ with three additions: `File.Naming`, `File.DirectoryFiles`, `File.CompanionFiles
   suffix; wrong prefix; 13 or 15 timestamp digits; invalid date such as month 13;
   `.LRF`/`.WAV`/`.JPG` extensions rejected; unanchored junk around a valid name rejected.
 - `FileSort` tests cover: counter order regardless of input order; counter order wins
-  over timestamp order and logs the warning; duplicate counter aborts; starting number.
+  over timestamp order and logs the warning; equal timestamps do not warn; duplicate
+  counter aborts; custom starting number; zero starting number allowed; negative
+  starting number aborts.
 - `FileRename` tests cover the GoPro cases (prefix, suffix, both, neither, digit count
-  given, auto-padded, too small) plus companions receiving the same base name and their
-  own extension, and empty input.
+  given, auto-padded, too small) plus an index of 0 padding to one digit, companions
+  receiving the same base name and their own extension, and empty input.
 - `CompanionFileFinder` tests cover: `.LRF` and `.WAV` found; case-insensitive base name
   and extension; `.JPG` and unrelated names ignored; the video itself not returned.
 - `RenameCollisionChecker` tests cover: clean set passes; planned name equal to an
@@ -260,8 +268,12 @@ with three additions: `File.Naming`, `File.DirectoryFiles`, `File.CompanionFiles
 
 ## 8. Repository
 
-- Folder `osmo-video-renamer`, git initialized on `main`, local commit identity matching
-  the GoPro commits. Creating the GitHub repository is left to Charles.
+- Folder `osmo-video-renamer` is already a git repository on `main` (first commit: this
+  spec) with the local commit identity set to match the GoPro commits, so the plan needs
+  no repository or identity setup. Creating the GitHub repository is left to Charles.
+- Boilerplate marked "copied from GoPro" comes from a read-only clone of
+  gopro-video-renamer at commit 145a44f:
+  `/private/tmp/claude-501/-Users-charlie-repos-osmo-video-renamer/c39be8f0-77d6-4811-8735-caf9e1ad1ae9/scratchpad/gopro-video-renamer`.
 - Files: `OsmoVideoRenamer.sln`, `OsmoVideoRenamer/`, `OsmoVideoRenamer.UnitTests/`,
   `README.md` (usage block in the GoPro README style plus a short description of the DJI
   naming convention and the companion-file behaviour), `.gitignore` (the Visual Studio
