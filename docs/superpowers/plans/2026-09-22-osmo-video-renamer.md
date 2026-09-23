@@ -2161,7 +2161,7 @@ namespace OsmoVideoRenamer.UnitTests.File
 
             Action act = () => sort.GetOrderedFiles([file1], -1);
 
-            act.Should().ThrowExactly<ArgumentOutOfRangeException>();
+            act.Should().ThrowExactly<ArgumentOutOfRangeException>().And.ParamName.Should().Be("startingNumber");
             _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
             _numberedFactoryMock.VerifyNoOtherCalls();
         }
@@ -2196,6 +2196,25 @@ namespace OsmoVideoRenamer.UnitTests.File
 
             result.Should().Equal(numbered1, numbered2, numbered3);
             _loggerMock.VerifyLogged(LogLevel.Warning, Times.Never());
+        }
+
+        [TestMethod]
+        public void FileSort_ShouldWarnOnlyOnce_WhenTimestampsGoBackwardsMoreThanOnce()
+        {
+            var file1 = Video("DJI_20240315150000_0001_D.MP4", 1, Time(15, 0));
+            var file2 = Video("DJI_20240315090000_0002_D.MP4", 2, Time(9, 0));
+            var file3 = Video("DJI_20240315080000_0003_D.MP4", 3, Time(8, 0));
+            var file4 = Video("DJI_20240315200000_0004_D.MP4", 4, Time(20, 0));
+            var numbered1 = SetupNumbered(1, file1);
+            var numbered2 = SetupNumbered(2, file2);
+            var numbered3 = SetupNumbered(3, file3);
+            var numbered4 = SetupNumbered(4, file4);
+            var sort = new FileSort(_loggerMock.Object, _numberedFactoryMock.Object);
+
+            var result = sort.GetOrderedFiles([file4, file3, file2, file1], null);
+
+            result.Should().Equal(numbered1, numbered2, numbered3, numbered4);
+            _loggerMock.VerifyLogged(LogLevel.Warning, Times.Once());
         }
 
         [TestMethod]
@@ -2346,7 +2365,7 @@ namespace OsmoVideoRenamer.File
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~FileSortTests"`
-Expected: PASS, 8 tests.
+Expected: PASS, 9 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -3824,7 +3843,7 @@ Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQ
 Expected: PASS, 15 tests (13 data rows + 2).
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test`
-Expected: PASS, 105 tests, `Failed: 0`.
+Expected: PASS, 106 tests, `Failed: 0`.
 
 - [ ] **Step 5: Run the real program's help**
 
