@@ -136,6 +136,12 @@ yields one digit (the GoPro tool's base-10 logarithm is not used because it fail
 0). If `--digit-count` is smaller than that, the run aborts with an
 `ArgumentOutOfRangeException` (same rule and message shape as the GoPro tool).
 
+The prefix and suffix must produce a plain file name. If the computed base name contains a
+path separator (so that `Path.GetFileName` would change it) or any character that the
+platform does not allow in file names, the run aborts with an `ArgumentException` after a
+Critical log, before any name is planned. Without this check a suffix such as `/../out`
+would escape the directory and defeat the collision check in 5.5, which compares names.
+
 ### 5.4 Companion files
 
 For each video, every file in the same directory whose base name (name without
@@ -231,6 +237,7 @@ with three additions: `File.Naming`, `File.DirectoryFiles`, `File.CompanionFiles
 | Negative `--starting-number` | `ArgumentOutOfRangeException` from `FileSort` (logged Critical) |
 | Timestamp earlier than the previous one in counter order | Warning logged, run continues |
 | `--digit-count` too small | `ArgumentOutOfRangeException` from `FileRename` (logged Critical) |
+| Prefix or suffix produces a path or an invalid file name | `ArgumentException` from `FileRename` (logged Critical) |
 | Planned name duplicated or already present | `IOException` from `RenameCollisionChecker` (logged Critical), nothing renamed |
 | `MoveTo` fails mid-run | Exception propagates; files already moved stay moved (same as GoPro) |
 
@@ -251,7 +258,8 @@ with three additions: `File.Naming`, `File.DirectoryFiles`, `File.CompanionFiles
   starting number aborts.
 - `FileRename` tests cover the GoPro cases (prefix, suffix, both, neither, digit count
   given, auto-padded, too small) plus an index of 0 padding to one digit, companions
-  receiving the same base name and their own extension, and empty input.
+  receiving the same base name and their own extension, empty input, and a prefix or
+  suffix that contains a path separator or an invalid file-name character.
 - `CompanionFileFinder` tests cover: `.LRF` and `.WAV` found; case-insensitive base name
   and extension; `.JPG` and unrelated names ignored; the video itself not returned.
 - `RenameCollisionChecker` tests cover: clean set passes; planned name equal to an
