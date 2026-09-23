@@ -142,6 +142,24 @@ namespace OsmoVideoRenamer.UnitTests.File
         }
 
         [TestMethod]
+        [DataRow("../", null)]
+        [DataRow(null, "/../out")]
+        [DataRow("bad\0name", null)]
+        public void FileRename_ShouldThrowIfPrefixOrSuffixDoesNotProduceAPlainFileName(string? prefix, string? suffix)
+        {
+            var input = GetMockedInput(3);
+            var rename = CreateFileRename();
+
+            Action act = () => rename.GetRenamedFiles(input, _allFiles, prefix, suffix, null);
+
+            act.Should().ThrowExactly<ArgumentException>().WithMessage("*plain file name*");
+            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+            _renamedVideoFactoryMock.VerifyNoOtherCalls();
+            _renamedCompanionFactoryMock.VerifyNoOtherCalls();
+            _companionFinderMock.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
         public void FileRename_ShouldRenameCompanionsToMatchTheirVideo()
         {
             var input = GetMockedInput(2);
