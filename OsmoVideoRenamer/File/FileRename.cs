@@ -15,6 +15,9 @@ namespace OsmoVideoRenamer.File
         private readonly IRenamedCompanionFileFactory _renamedCompanionFileFactory;
         private readonly ICompanionFileFinder _companionFileFinder;
 
+        // No file index can have more digits than int.MaxValue, and a larger count only produces unusable names.
+        private const int MAX_DIGIT_COUNT = 10;
+
         public FileRename(
             ILogger<FileRename> logger,
             IRenamedVideoFileFactory renamedVideoFileFactory,
@@ -86,6 +89,17 @@ namespace OsmoVideoRenamer.File
             }
 
             _logger.LogInformation("Verifying that digit count is large enough to accommodate maximum file index...");
+            if (digitCount.Value > MAX_DIGIT_COUNT)
+            {
+                _logger.LogCritical(
+                    "Cannot use provided digit count {digitCount} because it is greater than the maximum of {maxDigitCount}.",
+                    digitCount.Value,
+                    MAX_DIGIT_COUNT);
+                throw new ArgumentOutOfRangeException(
+                    nameof(digitCount),
+                    $"Digit count must be at most {MAX_DIGIT_COUNT}");
+            }
+
             if (digitCount.Value < requiredDigits)
             {
                 _logger.LogCritical(

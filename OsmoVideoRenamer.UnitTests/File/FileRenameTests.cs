@@ -136,7 +136,21 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => rename.GetRenamedFiles(input, _allFiles, null, null, 1);
 
             act.Should().ThrowExactly<ArgumentOutOfRangeException>();
-            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Critical, "Cannot use provided digit count 1 because", Times.Once());
+            _renamedVideoFactoryMock.VerifyNoOtherCalls();
+            _renamedCompanionFactoryMock.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
+        public void FileRename_ShouldThrowIfSpecifiedDigitsTooHigh()
+        {
+            var input = GetMockedInput(3);
+            var rename = CreateFileRename();
+
+            Action act = () => rename.GetRenamedFiles(input, _allFiles, null, null, 11);
+
+            act.Should().ThrowExactly<ArgumentOutOfRangeException>().WithMessage("*at most 10*");
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Critical, "greater than the maximum of 10", Times.Once());
             _renamedVideoFactoryMock.VerifyNoOtherCalls();
             _renamedCompanionFactoryMock.VerifyNoOtherCalls();
         }
@@ -153,7 +167,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => rename.GetRenamedFiles(input, _allFiles, prefix, suffix, null);
 
             act.Should().ThrowExactly<ArgumentException>().WithMessage("*plain file name*");
-            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Critical, "is not a plain file name", Times.Once());
             _renamedVideoFactoryMock.VerifyNoOtherCalls();
             _renamedCompanionFactoryMock.VerifyNoOtherCalls();
             _companionFinderMock.VerifyNoOtherCalls();

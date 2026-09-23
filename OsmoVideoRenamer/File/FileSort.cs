@@ -67,7 +67,7 @@ namespace OsmoVideoRenamer.File
                 if (ordered[i].CaptureTimestamp < ordered[i - 1].CaptureTimestamp)
                 {
                     _logger.LogWarning(
-                        "Timestamps are not in sequence order ({later} was recorded after {earlier} but has an earlier timestamp); the camera clock may have changed or the time zone may have been adjusted. Files are ordered by sequence number.",
+                        "Timestamps are not in sequence order ({later} was recorded after {earlier} but has an earlier timestamp); the camera clock may have changed, the time zone may have been adjusted, or files from more than one card may be mixed together. Files are ordered by sequence number.",
                         ordered[i].Name,
                         ordered[i - 1].Name);
                     return;

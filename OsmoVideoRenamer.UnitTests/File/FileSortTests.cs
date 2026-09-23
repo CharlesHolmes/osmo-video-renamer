@@ -91,7 +91,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             var result = sort.GetOrderedFiles([file2, file1], null);
 
             result.Should().Equal(numbered1, numbered2);
-            _loggerMock.VerifyLogged(LogLevel.Warning, Times.Once());
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Warning, "files from more than one card may be mixed together", Times.Once());
         }
 
         [TestMethod]
@@ -140,7 +140,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => sort.GetOrderedFiles([file1, file2], null);
 
             act.Should().ThrowExactly<ArgumentException>().WithMessage("*3*");
-            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Critical, "Sequence number(s) 3 appear more than once", Times.Once());
             _numberedFactoryMock.VerifyNoOtherCalls();
         }
 
