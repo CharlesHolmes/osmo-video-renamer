@@ -2831,6 +2831,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => checker.VerifyNoCollisions(renamed, existing);
 
             act.Should().ThrowExactly<IOException>().WithMessage("*Trip - 001.LRF*");
+            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
         }
 
         [TestMethod]
@@ -2847,6 +2848,21 @@ namespace OsmoVideoRenamer.UnitTests.File
         }
 
         [TestMethod]
+        public void Checker_ShouldReportBothDuplicateAndExistingNamesInOneRun()
+        {
+            var renamed = new[] { Renamed("Trip - 001.MP4"), Renamed("Trip - 001.MP4"), Renamed("Trip - 002.MP4") };
+            var existing = Existing("DJI_20240315120000_0001_D.MP4", "Trip - 002.MP4");
+            var checker = new RenameCollisionChecker(_loggerMock.Object);
+
+            Action act = () => checker.VerifyNoCollisions(renamed, existing);
+
+            act.Should().ThrowExactly<IOException>()
+                .WithMessage("*more than once: Trip - 001.MP4*")
+                .WithMessage("*already exist in the directory: Trip - 002.MP4*");
+            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+        }
+
+        [TestMethod]
         public void Checker_ShouldCompareNamesCaseInsensitively()
         {
             var renamed = new[] { Renamed("Trip - 001.MP4") };
@@ -2856,6 +2872,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => checker.VerifyNoCollisions(renamed, existing);
 
             act.Should().ThrowExactly<IOException>();
+            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
         }
 
         [TestMethod]
@@ -2983,7 +3000,7 @@ namespace OsmoVideoRenamer.File
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~RenameCollisionCheckerTests"`
-Expected: PASS, 6 tests.
+Expected: PASS, 7 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -3843,7 +3860,7 @@ Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQ
 Expected: PASS, 15 tests (13 data rows + 2).
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test`
-Expected: PASS, 106 tests, `Failed: 0`.
+Expected: PASS, 107 tests, `Failed: 0`.
 
 - [ ] **Step 5: Run the real program's help**
 
