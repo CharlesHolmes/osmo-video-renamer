@@ -3800,12 +3800,12 @@ Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQ
 Expected: PASS, 15 tests (13 data rows + 2).
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test`
-Expected: PASS, all tests (about 99), `Failed: 0`.
+Expected: PASS, 102 tests, `Failed: 0`.
 
 - [ ] **Step 5: Run the real program's help**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet run --project OsmoVideoRenamer -- --help`
-Expected: a usage block listing `--file-location`, `--prefix`, `--suffix`, `--starting-number`, `--digit-count`, `--dry-run`, `-h, --help`, `--version`. Keep this output; Task 18 pastes it into the README.
+Expected: a usage block listing `--file-location`, `--prefix`, `--suffix`, `--starting-number`, `--digit-count`, `--dry-run`, `-h, --help`, `--version`. Keep this output; Task 18 pastes it into the README. On macOS the first line reads `Usage: OsmoVideoRename [...]` with the final letter missing, because the operating system truncates the process name to 15 characters and Cocona prints the process name; that is not a bug in the code.
 
 - [ ] **Step 6: Commit**
 
@@ -3826,7 +3826,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 - [ ] **Step 1: Write the README**
 
-Replace the `<paste>` block with the exact output of `dotnet run --project OsmoVideoRenamer -- --help` from Task 17.
+Replace the `<paste>` block with the exact output of `dotnet run --project OsmoVideoRenamer -- --help` from Task 17, correcting the truncated `OsmoVideoRename` in the `Usage:` line to `OsmoVideoRenamer` (see Task 17 Step 5).
 
 ````markdown
 # osmo-video-renamer
@@ -3896,7 +3896,7 @@ echo "notes" > notes.txt
 ls -1 "$E2E"
 ```
 
-Expected: 15 files listed.
+Expected: 13 files listed (4 `.MP4`, 4 `.LRF`, 2 `.WAV`, 1 `.JPG`, 1 `.DNG`, `notes.txt`).
 
 - [ ] **Step 3: Dry run, then verify nothing changed**
 
@@ -3924,7 +3924,7 @@ Expected console lines (log lines from Cocona may appear between them):
     DJI_20240315121500_0010_D.LRF -> Trip - 4.LRF
 ```
 
-(Companion order within a video follows directory listing order, so `.LRF`/`.WAV` may swap.) The `ls` afterwards must show the same 15 original names.
+(Companion order within a video follows directory listing order, so `.LRF`/`.WAV` may swap.) The `ls` afterwards must show the same 13 original names.
 
 - [ ] **Step 4: Real run, then verify the result**
 
@@ -3937,7 +3937,7 @@ dotnet run --project OsmoVideoRenamer -- --file-location "$E2E" --prefix "Trip -
 ls -1 "$E2E"
 ```
 
-Expected `ls`:
+Expected `ls` (macOS lists `notes.txt` before the `Trip - ...` names; the set of names is what matters):
 
 ```text
 DJI_20240315120200_0004_D.DNG
