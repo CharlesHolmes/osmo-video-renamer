@@ -14,15 +14,20 @@ namespace OsmoVideoRenamer.File.Naming
     {
         public const string TimestampFormat = "yyyyMMddHHmmss";
 
-        private const string MATCHING_FILE_PATTERN = @"^DJI_(?<timestamp>[0-9]{14})_(?<sequence>[0-9]{4})_[A-Z]+\.MP4$";
+        private const string MATCHING_FILE_PATTERN = @"^DJI_(?<timestamp>[0-9]{14})_(?<sequence>[0-9]{4})_[A-Z]+\.MP4\z";
 
         private static readonly Regex _matchingFileRegex = new Regex(
             MATCHING_FILE_PATTERN,
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-        public static bool TryParse(string fileName, [NotNullWhen(true)] out DjiVideoFileName? result)
+        public static bool TryParse(string? fileName, [NotNullWhen(true)] out DjiVideoFileName? result)
         {
             result = null;
+            if (fileName is null)
+            {
+                return false;
+            }
+
             Match match = _matchingFileRegex.Match(fileName);
             if (!match.Success)
             {
