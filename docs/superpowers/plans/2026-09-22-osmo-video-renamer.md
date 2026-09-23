@@ -588,6 +588,24 @@ namespace OsmoVideoRenamer.UnitTests.File.Naming
         }
 
         [TestMethod]
+        public void TryParse_ShouldAcceptLeapDay()
+        {
+            bool parsed = DjiVideoFileName.TryParse("DJI_20240229123456_0007_D.MP4", out DjiVideoFileName? result);
+
+            parsed.Should().BeTrue();
+            result!.CaptureTimestamp.Should().Be(new DateTime(2024, 2, 29, 12, 34, 56));
+        }
+
+        [TestMethod]
+        public void TryParse_ShouldReturnFalseForNull()
+        {
+            bool parsed = DjiVideoFileName.TryParse(null, out DjiVideoFileName? result);
+
+            parsed.Should().BeFalse();
+            result.Should().BeNull();
+        }
+
+        [TestMethod]
         [DataRow("GH010001.mp4")]
         [DataRow("DJX_20240315123456_0007_D.MP4")]
         [DataRow("DJI_2024031512345_0007_D.MP4")]
@@ -606,6 +624,7 @@ namespace OsmoVideoRenamer.UnitTests.File.Naming
         [DataRow("DJI_20240315243456_0007_D.MP4")]
         [DataRow("notes.txt")]
         [DataRow("")]
+        [DataRow("DJI_20240315123456_0007_D.MP4\n")]
         public void TryParse_ShouldRejectNonVideoNames(string fileName)
         {
             bool parsed = DjiVideoFileName.TryParse(fileName, out DjiVideoFileName? result);
@@ -660,15 +679,20 @@ namespace OsmoVideoRenamer.File.Naming
     {
         public const string TimestampFormat = "yyyyMMddHHmmss";
 
-        private const string MATCHING_FILE_PATTERN = @"^DJI_(?<timestamp>[0-9]{14})_(?<sequence>[0-9]{4})_[A-Z]+\.MP4$";
+        private const string MATCHING_FILE_PATTERN = @"^DJI_(?<timestamp>[0-9]{14})_(?<sequence>[0-9]{4})_[A-Z]+\.MP4\z";
 
         private static readonly Regex _matchingFileRegex = new Regex(
             MATCHING_FILE_PATTERN,
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-        public static bool TryParse(string fileName, [NotNullWhen(true)] out DjiVideoFileName? result)
+        public static bool TryParse(string? fileName, [NotNullWhen(true)] out DjiVideoFileName? result)
         {
             result = null;
+            if (fileName is null)
+            {
+                return false;
+            }
+
             Match match = _matchingFileRegex.Match(fileName);
             if (!match.Success)
             {
@@ -706,7 +730,7 @@ namespace OsmoVideoRenamer.File.Naming
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~DjiVideoFileNameTests"`
-Expected: PASS, 23 tests (3 + 18 data rows + 2).
+Expected: PASS, 26 tests (5 + 19 data rows + 2).
 
 - [ ] **Step 5: Commit**
 
@@ -3800,7 +3824,7 @@ Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQ
 Expected: PASS, 15 tests (13 data rows + 2).
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test`
-Expected: PASS, 102 tests, `Failed: 0`.
+Expected: PASS, 105 tests, `Failed: 0`.
 
 - [ ] **Step 5: Run the real program's help**
 
