@@ -68,7 +68,7 @@ Repository extras: `OsmoVideoRenamer.sln`, `.gitignore`, `README.md`, `.github/d
 - Create: `OsmoVideoRenamer.UnitTests/GlobalUsings.cs`
 - Create: `.gitignore`, `.github/dependabot.yml`, `.github/workflows/pr-checks.yml`, `.github/workflows/auto-merge-dependabot.yml` (copied from the GoPro checkout)
 
-- [ ] **Step 1: Create the production project file**
+- [x] **Step 1: Create the production project file**
 
 `OsmoVideoRenamer/OsmoVideoRenamer.csproj`:
 
@@ -90,7 +90,7 @@ Repository extras: `OsmoVideoRenamer.sln`, `.gitignore`, `README.md`, `.github/d
 </Project>
 ```
 
-- [ ] **Step 2: Create the placeholder entry point**
+- [x] **Step 2: Create the placeholder entry point**
 
 `OsmoVideoRenamer/Program.cs`:
 
@@ -107,7 +107,7 @@ namespace OsmoVideoRenamer
 }
 ```
 
-- [ ] **Step 3: Create the test project file and global usings**
+- [x] **Step 3: Create the test project file and global usings**
 
 `OsmoVideoRenamer.UnitTests/OsmoVideoRenamer.UnitTests.csproj`:
 
@@ -150,7 +150,7 @@ global using Microsoft.VisualStudio.TestTools.UnitTesting;
 global using Moq;
 ```
 
-- [ ] **Step 4: Generate the solution and copy boilerplate**
+- [x] **Step 4: Generate the solution and copy boilerplate**
 
 Run:
 
@@ -168,7 +168,7 @@ cp "$GOPRO/.github/workflows/auto-merge-dependabot.yml" .github/workflows/auto-m
 
 Expected: `dotnet sln add` prints two "added to the solution" lines. The copied workflow files need no edits (they run `dotnet restore/build/test` on the whole solution).
 
-- [ ] **Step 5: Build and verify**
+- [x] **Step 5: Build and verify**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet build`
 Expected: `Build succeeded.` with `0 Error(s)`.
@@ -176,7 +176,7 @@ Expected: `Build succeeded.` with `0 Error(s)`.
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test`
 Expected: build succeeds; the test runner reports no tests discovered (a warning, not an error).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -195,7 +195,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create: `OsmoVideoRenamer/ConsoleWrapping/ConsoleWrapper.cs`
 - Test: `OsmoVideoRenamer.UnitTests/ConsoleWrapping/ConsoleWrapperTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```csharp
 using OsmoVideoRenamer.ConsoleWrapping;
@@ -252,12 +252,12 @@ namespace OsmoVideoRenamer.UnitTests.ConsoleWrapping
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~ConsoleWrapperTests"`
 Expected: build error `CS0246: The type or namespace name 'ConsoleWrapper' could not be found`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/ConsoleWrapping/IConsoleWrapper.cs`:
 
@@ -292,12 +292,12 @@ namespace OsmoVideoRenamer.ConsoleWrapping
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~ConsoleWrapperTests"`
 Expected: PASS, 2 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -317,7 +317,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Test: `OsmoVideoRenamer.UnitTests/ParameterLogging/ParameterLoggingCommandFilterTests.cs`
 - Test: `OsmoVideoRenamer.UnitTests/ParameterLogging/ParameterLoggingCommandFilterFactoryTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `OsmoVideoRenamer.UnitTests/ParameterLogging/ParameterLoggingCommandFilterTests.cs`:
 
@@ -460,12 +460,12 @@ namespace OsmoVideoRenamer.UnitTests.ParameterLogging
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~ParameterLogging"`
 Expected: build error `CS0246` for `ParameterLoggingCommandFilter`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/ParameterLogging/ParameterLoggingCommandFilter.cs`:
 
@@ -525,12 +525,12 @@ namespace OsmoVideoRenamer.ParameterLogging
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~ParameterLogging"`
 Expected: PASS, 3 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -548,7 +548,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create: `OsmoVideoRenamer/File/Naming/DjiVideoFileName.cs`
 - Test: `OsmoVideoRenamer.UnitTests/File/Naming/DjiVideoFileNameTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```csharp
 using OsmoVideoRenamer.File.Naming;
@@ -653,12 +653,12 @@ namespace OsmoVideoRenamer.UnitTests.File.Naming
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~DjiVideoFileNameTests"`
 Expected: build error `CS0246` for `DjiVideoFileName`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/File/Naming/DjiVideoFileName.cs`:
 
@@ -727,12 +727,12 @@ namespace OsmoVideoRenamer.File.Naming
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~DjiVideoFileNameTests"`
 Expected: PASS, 26 tests (5 + 19 data rows + 2).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -755,7 +755,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Test: `OsmoVideoRenamer.UnitTests/File/DirectoryFiles/DirectoryFileTests.cs`
 - Test: `OsmoVideoRenamer.UnitTests/File/DirectoryFiles/DirectoryFileFactoryTests.cs`
 
-- [ ] **Step 1: Write the mock helper and the failing tests**
+- [x] **Step 1: Write the mock helper and the failing tests**
 
 `OsmoVideoRenamer.UnitTests/File/DirectoryFileMocking.cs`:
 
@@ -867,12 +867,12 @@ namespace OsmoVideoRenamer.UnitTests.File.DirectoryFiles
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~DirectoryFile"`
 Expected: build error `CS0246` for `IDirectoryFile` / `DirectoryFile`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/File/DirectoryFiles/Interfaces/IDirectoryFile.cs`:
 
@@ -951,12 +951,12 @@ namespace OsmoVideoRenamer.File.DirectoryFiles
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~DirectoryFile"`
 Expected: PASS, 4 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -979,7 +979,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Test: `OsmoVideoRenamer.UnitTests/File/VideoFiles/VideoFileTests.cs`
 - Test: `OsmoVideoRenamer.UnitTests/File/VideoFiles/VideoFileFactoryTests.cs`
 
-- [ ] **Step 1: Extend the mock helper and write the failing tests**
+- [x] **Step 1: Extend the mock helper and write the failing tests**
 
 Add to `DirectoryFileMocking` (new `using OsmoVideoRenamer.File.VideoFiles.Interfaces;` at the top, new method inside the class):
 
@@ -1074,12 +1074,12 @@ namespace OsmoVideoRenamer.UnitTests.File.VideoFiles
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~VideoFileTests|FullyQualifiedName~VideoFileFactoryTests"`
 Expected: build error `CS0246` for `IVideoFile` / `VideoFile`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/File/VideoFiles/Interfaces/IVideoFile.cs`:
 
@@ -1157,12 +1157,12 @@ namespace OsmoVideoRenamer.File.VideoFiles
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~VideoFileTests|FullyQualifiedName~VideoFileFactoryTests"`
 Expected: PASS, 4 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -1184,7 +1184,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Test: `OsmoVideoRenamer.UnitTests/File/VideoFiles/Numbered/NumberedVideoFileTests.cs`
 - Test: `OsmoVideoRenamer.UnitTests/File/VideoFiles/Numbered/NumberedVideoFileFactoryTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `OsmoVideoRenamer.UnitTests/File/VideoFiles/Numbered/NumberedVideoFileTests.cs`:
 
@@ -1264,12 +1264,12 @@ namespace OsmoVideoRenamer.UnitTests.File.VideoFiles.Numbered
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~NumberedVideoFile"`
 Expected: build error `CS0246` for `INumberedVideoFile` / `NumberedVideoFile`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/File/VideoFiles/Numbered/Interfaces/INumberedVideoFile.cs`:
 
@@ -1336,12 +1336,12 @@ namespace OsmoVideoRenamer.File.VideoFiles.Numbered
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~NumberedVideoFile"`
 Expected: PASS, 3 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -1363,7 +1363,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Test: `OsmoVideoRenamer.UnitTests/File/CompanionFiles/RenamedCompanionFileTests.cs`
 - Test: `OsmoVideoRenamer.UnitTests/File/CompanionFiles/RenamedCompanionFileFactoryTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `OsmoVideoRenamer.UnitTests/File/CompanionFiles/RenamedCompanionFileTests.cs`:
 
@@ -1441,12 +1441,12 @@ namespace OsmoVideoRenamer.UnitTests.File.CompanionFiles
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~RenamedCompanionFile"`
 Expected: build error `CS0246` for `RenamedCompanionFile`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/File/CompanionFiles/Interfaces/IRenamedCompanionFile.cs`:
 
@@ -1519,12 +1519,12 @@ namespace OsmoVideoRenamer.File.CompanionFiles
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~RenamedCompanionFile"`
 Expected: PASS, 3 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -1546,7 +1546,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Test: `OsmoVideoRenamer.UnitTests/File/VideoFiles/Renamed/RenamedVideoFileTests.cs`
 - Test: `OsmoVideoRenamer.UnitTests/File/VideoFiles/Renamed/RenamedVideoFileFactoryTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `OsmoVideoRenamer.UnitTests/File/VideoFiles/Renamed/RenamedVideoFileTests.cs`:
 
@@ -1642,12 +1642,12 @@ namespace OsmoVideoRenamer.UnitTests.File.VideoFiles.Renamed
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~RenamedVideoFile"`
 Expected: build error `CS0246` for `RenamedVideoFile`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/File/VideoFiles/Renamed/Interfaces/IRenamedVideoFile.cs`:
 
@@ -1730,12 +1730,12 @@ namespace OsmoVideoRenamer.File.VideoFiles.Renamed
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~RenamedVideoFile"`
 Expected: PASS, 3 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -1754,7 +1754,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create: `OsmoVideoRenamer/File/CompanionFileFinder.cs`
 - Test: `OsmoVideoRenamer.UnitTests/File/CompanionFileFinderTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```csharp
 using OsmoVideoRenamer.File;
@@ -1830,12 +1830,12 @@ namespace OsmoVideoRenamer.UnitTests.File
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~CompanionFileFinderTests"`
 Expected: build error `CS0246` for `CompanionFileFinder`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/File/Interfaces/ICompanionFileFinder.cs`:
 
@@ -1877,12 +1877,12 @@ namespace OsmoVideoRenamer.File
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~CompanionFileFinderTests"`
 Expected: PASS, 4 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -1901,7 +1901,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create: `OsmoVideoRenamer/File/FileFilter.cs`
 - Test: `OsmoVideoRenamer.UnitTests/File/FileFilterTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```csharp
 using OsmoVideoRenamer.File;
@@ -1977,12 +1977,12 @@ namespace OsmoVideoRenamer.UnitTests.File
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~FileFilterTests"`
 Expected: build error `CS0246` for `FileFilter`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/File/Interfaces/IFileFilter.cs`:
 
@@ -2026,12 +2026,12 @@ namespace OsmoVideoRenamer.File
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~FileFilterTests"`
 Expected: PASS, 3 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -2051,7 +2051,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create: `OsmoVideoRenamer/File/FileSort.cs`
 - Test: `OsmoVideoRenamer.UnitTests/File/FileSortTests.cs`
 
-- [ ] **Step 1: Write the logger helper and the failing tests**
+- [x] **Step 1: Write the logger helper and the failing tests**
 
 `OsmoVideoRenamer.UnitTests/Logging/LoggerMockExtensions.cs`:
 
@@ -2257,12 +2257,12 @@ namespace OsmoVideoRenamer.UnitTests.File
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~FileSortTests"`
 Expected: build error `CS0246` for `FileSort`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/File/Interfaces/IFileSort.cs`:
 
@@ -2362,12 +2362,12 @@ namespace OsmoVideoRenamer.File
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~FileSortTests"`
 Expected: PASS, 9 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -2386,7 +2386,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create: `OsmoVideoRenamer/File/FileRename.cs`
 - Test: `OsmoVideoRenamer.UnitTests/File/FileRenameTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```csharp
 using Microsoft.Extensions.Logging;
@@ -2620,12 +2620,12 @@ namespace OsmoVideoRenamer.UnitTests.File
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~FileRenameTests"`
 Expected: build error `CS0246` for `FileRename`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/File/Interfaces/IFileRename.cs`:
 
@@ -2742,12 +2742,12 @@ namespace OsmoVideoRenamer.File
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~FileRenameTests"`
 Expected: PASS, 11 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -2766,7 +2766,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create: `OsmoVideoRenamer/File/RenameCollisionChecker.cs`
 - Test: `OsmoVideoRenamer.UnitTests/File/RenameCollisionCheckerTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```csharp
 using Microsoft.Extensions.Logging;
@@ -2907,12 +2907,12 @@ namespace OsmoVideoRenamer.UnitTests.File
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~RenameCollisionCheckerTests"`
 Expected: build error `CS0246` for `RenameCollisionChecker`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/File/Interfaces/IRenameCollisionChecker.cs`:
 
@@ -2997,12 +2997,12 @@ namespace OsmoVideoRenamer.File
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~RenameCollisionCheckerTests"`
 Expected: PASS, 7 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -3024,7 +3024,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Test: `OsmoVideoRenamer.UnitTests/Directory/VideoDirectoryTests.cs`
 - Test: `OsmoVideoRenamer.UnitTests/Directory/VideoDirectoryFactoryTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `OsmoVideoRenamer.UnitTests/Directory/VideoDirectoryTests.cs`:
 
@@ -3157,12 +3157,12 @@ namespace OsmoVideoRenamer.UnitTests.Directory
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~VideoDirectory"`
 Expected: build error `CS0246` for `VideoDirectory`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/Directory/Interfaces/IVideoDirectory.cs`:
 
@@ -3272,12 +3272,12 @@ namespace OsmoVideoRenamer.Directory
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~VideoDirectory"`
 Expected: PASS, 3 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -3295,7 +3295,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create: `OsmoVideoRenamer/RenameCommand.cs`
 - Test: `OsmoVideoRenamer.UnitTests/RenameCommandTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```csharp
 using Microsoft.Extensions.Logging;
@@ -3504,12 +3504,12 @@ namespace OsmoVideoRenamer.UnitTests
 }
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~RenameCommandTests"`
 Expected: build error `CS0246` for `RenameCommand`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/RenameCommand.cs`:
 
@@ -3598,12 +3598,12 @@ namespace OsmoVideoRenamer
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~RenameCommandTests"`
 Expected: PASS, 7 tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -3626,7 +3626,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Test: `OsmoVideoRenamer.UnitTests/Configuration/CommandConfigurationTests.cs`
 - Test: `OsmoVideoRenamer.UnitTests/Configuration/FilterConfigurationTests.cs`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `OsmoVideoRenamer.UnitTests/Configuration/ServiceConfigurationTests.cs`:
 
@@ -3745,12 +3745,12 @@ namespace OsmoVideoRenamer.UnitTests.Configuration
 
 (The two Cocona tests are copied from the GoPro project, where they pass against Cocona 2.2.0; if `Cocona.Filters` is reported unused in `CommandConfigurationTests`, keep it, the `TypeCommandDataSource` type lives in `Cocona.Builder`.)
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~Configuration"`
 Expected: build error `CS0246` for `ServiceConfiguration`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 `OsmoVideoRenamer/Configuration/ServiceConfiguration.cs`:
 
@@ -3861,7 +3861,7 @@ namespace OsmoVideoRenamer
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass, then the whole suite**
+- [x] **Step 4: Run the tests to verify they pass, then the whole suite**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~Configuration"`
 Expected: PASS, 15 tests (13 data rows + 2).
@@ -3869,12 +3869,12 @@ Expected: PASS, 15 tests (13 data rows + 2).
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test`
 Expected: PASS, 107 tests, `Failed: 0`.
 
-- [ ] **Step 5: Run the real program's help**
+- [x] **Step 5: Run the real program's help**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet run --project OsmoVideoRenamer -- --help`
 Expected: a usage block listing `--file-location`, `--prefix`, `--suffix`, `--starting-number`, `--digit-count`, `--dry-run`, `-h, --help`, `--version`. Keep this output; Task 18 pastes it into the README. On macOS the first line reads `Usage: OsmoVideoRename [...]` with the final letter missing, because the operating system truncates the process name to 15 characters and Cocona prints the process name; that is not a bug in the code.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
@@ -3891,7 +3891,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 **Files:**
 - Create: `README.md`
 
-- [ ] **Step 1: Write the README**
+- [x] **Step 1: Write the README**
 
 Replace the `<paste>` block with the exact output of `dotnet run --project OsmoVideoRenamer -- --help` from Task 17, correcting the truncated `OsmoVideoRename` in the `Usage:` line to `OsmoVideoRenamer` (see Task 17 Step 5).
 
@@ -3945,7 +3945,7 @@ Run with `--dry-run` first to see the plan without changing anything.
 ```
 ````
 
-- [ ] **Step 2: Build a scratch directory of fake DJI files**
+- [x] **Step 2: Build a scratch directory of fake DJI files**
 
 Run:
 
@@ -3965,7 +3965,7 @@ ls -1 "$E2E"
 
 Expected: 13 files listed (4 `.MP4`, 4 `.LRF`, 2 `.WAV`, 1 `.JPG`, 1 `.DNG`, `notes.txt`).
 
-- [ ] **Step 3: Dry run, then verify nothing changed**
+- [x] **Step 3: Dry run, then verify nothing changed**
 
 Run:
 
@@ -3993,7 +3993,7 @@ Expected console lines (log lines from Cocona may appear between them):
 
 (Companion order within a video follows directory listing order, so `.LRF`/`.WAV` may swap.) The `ls` afterwards must show the same 13 original names.
 
-- [ ] **Step 4: Real run, then verify the result**
+- [x] **Step 4: Real run, then verify the result**
 
 Run:
 
@@ -4022,12 +4022,12 @@ Trip - 004.MP4
 notes.txt
 ```
 
-- [ ] **Step 5: Re-run on the renamed directory**
+- [x] **Step 5: Re-run on the renamed directory**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet run --project OsmoVideoRenamer -- --file-location "/private/tmp/claude-501/-Users-charlie-repos-osmo-video-renamer/c39be8f0-77d6-4811-8735-caf9e1ad1ae9/scratchpad/e2e" --prefix "Trip - "`
 Expected: `No DJI Osmo videos found in /private/tmp/.../e2e.` and exit code 0.
 
-- [ ] **Step 6: Collision and duplicate-counter checks**
+- [x] **Step 6: Collision and duplicate-counter checks**
 
 Run:
 
@@ -4043,7 +4043,7 @@ dotnet run --project OsmoVideoRenamer -- --file-location "$E2E" --prefix "Other 
 
 Expected: the first run fails with an `IOException` whose message names `Trip - 001.MP4` as already existing, non-zero exit code, and the grep prints `1` (the new file was not renamed). The second run fails with an `ArgumentException` about sequence number 11 appearing more than once, non-zero exit code.
 
-- [ ] **Step 7: Measure coverage**
+- [x] **Step 7: Measure coverage**
 
 Run:
 
@@ -4056,7 +4056,7 @@ grep -o 'line-rate="[0-9.]*"' $(find OsmoVideoRenamer.UnitTests/TestResults -nam
 
 Expected: `Failed: 0` and a first `line-rate` of `0.97` or higher (Program is excluded). If lower, open the cobertura file, find classes with `line-rate` below 1 and add tests for the uncovered lines before continuing.
 
-- [ ] **Step 8: Commit and clean up**
+- [x] **Step 8: Commit and clean up**
 
 ```bash
 cd /Users/charlie/repos/osmo-video-renamer
