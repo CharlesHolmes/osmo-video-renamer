@@ -3307,6 +3307,7 @@ using OsmoVideoRenamer.File.Interfaces;
 using OsmoVideoRenamer.File.VideoFiles.Interfaces;
 using OsmoVideoRenamer.File.VideoFiles.Numbered.Interfaces;
 using OsmoVideoRenamer.File.VideoFiles.Renamed.Interfaces;
+using OsmoVideoRenamer.UnitTests.Logging;
 
 namespace OsmoVideoRenamer.UnitTests
 {
@@ -3376,6 +3377,7 @@ namespace OsmoVideoRenamer.UnitTests
             _fileSortMock.Verify(m => m.GetOrderedFiles(_filtered, _startingNumber), Times.Once());
             _fileRenameMock.Verify(m => m.GetRenamedFiles(_numbered, _allFiles, _prefix, _suffix, _digitCount), Times.Once());
             _collisionCheckerMock.Verify(m => m.VerifyNoCollisions(_renamed, _allFiles), Times.Once());
+            _loggerMock.VerifyLogged(LogLevel.Information, Times.Once());
             _directoryFactoryMock.VerifyNoOtherCalls();
             _directoryMock.VerifyNoOtherCalls();
             _fileFilterMock.VerifyNoOtherCalls();
@@ -3387,14 +3389,18 @@ namespace OsmoVideoRenamer.UnitTests
         [TestMethod]
         public void Command_ShouldWritePreviewToConsole_IncludingCompanions()
         {
+            var lines = new List<string>();
+            _consoleWrapperMock.Setup(m => m.WriteLine(It.IsAny<string>())).Callback<string>(line => lines.Add(line));
             var command = CreateCommand();
 
             command.Rename(_fileLocation, _prefix, _suffix, _startingNumber, _digitCount, true);
 
-            _consoleWrapperMock.Verify(m => m.WriteLine("1: old1 -> new1"), Times.Once());
-            _consoleWrapperMock.Verify(m => m.WriteLine("    old1.LRF -> new1.LRF"), Times.Once());
-            _consoleWrapperMock.Verify(m => m.WriteLine("    old1.WAV -> new1.WAV"), Times.Once());
-            _consoleWrapperMock.Verify(m => m.WriteLine("2: old2 -> new file"), Times.Once());
+            lines.Should().Equal(
+                "1: old1 -> new1",
+                "    old1.LRF -> new1.LRF",
+                "    old1.WAV -> new1.WAV",
+                "2: old2 -> new file");
+            _consoleWrapperMock.Verify(m => m.WriteLine(It.IsAny<string>()), Times.Exactly(4));
             _consoleWrapperMock.VerifyNoOtherCalls();
         }
 
@@ -3452,6 +3458,7 @@ namespace OsmoVideoRenamer.UnitTests
             _consoleWrapperMock.VerifyNoOtherCalls();
             _fileRenameMock.VerifyNoOtherCalls();
             _collisionCheckerMock.VerifyNoOtherCalls();
+            _loggerMock.VerifyLogged(LogLevel.Information, Times.Never());
         }
 
         [TestMethod]
@@ -3552,7 +3559,7 @@ namespace OsmoVideoRenamer
             [Option(Description = "Directory where the Osmo videos are stored")] string fileLocation,
             [Option(Description = "Text that should appear before each file's number")] string? prefix,
             [Option(Description = "Text that should appear after each file's number")] string? suffix,
-            [Option(Description = "What number the renamed files should start at")] int? startingNumber,
+            [Option(Description = "What number the renamed files should start at (default 1)")] int? startingNumber,
             [Option(Description = "The number of digits to include in each file number")] int? digitCount,
             [Option(Description = "Print a list of the files to be renamed, but do not rename them")] bool dryRun = false)
         {
