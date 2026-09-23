@@ -6,12 +6,12 @@ namespace OsmoVideoRenamer.UnitTests.File.VideoFiles.Numbered
     [TestClass]
     public class NumberedVideoFileTests
     {
-        private static readonly DateTime _timestamp = new DateTime(2024, 3, 15, 12, 34, 56);
+        private static readonly DateTime _timestamp = new DateTime(2020, 1, 2, 3, 4, 5);
 
         [TestMethod]
         public void NumberedVideoFile_GivenIVideoFile_HasCorrectProperties()
         {
-            var videoFile = DirectoryFileMocking.GetMockedIVideoFile("DJI_20240315123456_0007_D.MP4", 7, _timestamp);
+            var videoFile = DirectoryFileMocking.GetMockedIVideoFile("DJI_20240315123456_0007_D.MP4", 42, _timestamp);
 
             var file = new NumberedVideoFile(9, videoFile);
 
@@ -20,7 +20,7 @@ namespace OsmoVideoRenamer.UnitTests.File.VideoFiles.Numbered
             file.Name.Should().Be("DJI_20240315123456_0007_D.MP4");
             file.BaseName.Should().Be("DJI_20240315123456_0007_D");
             file.FileExtension.Should().Be(".MP4");
-            file.SequenceNumber.Should().Be(7);
+            file.SequenceNumber.Should().Be(42);
             file.CaptureTimestamp.Should().Be(_timestamp);
         }
 
@@ -30,7 +30,7 @@ namespace OsmoVideoRenamer.UnitTests.File.VideoFiles.Numbered
             var fileInfoMock = DirectoryFileMocking.GetMockedIFileInfo("DJI_20240315123456_0007_D.MP4");
             var numberedMock = new Mock<INumberedVideoFile>();
             numberedMock.Setup(m => m.FileInfo).Returns(fileInfoMock.Object);
-            numberedMock.Setup(m => m.SequenceNumber).Returns(7);
+            numberedMock.Setup(m => m.SequenceNumber).Returns(42);
             numberedMock.Setup(m => m.CaptureTimestamp).Returns(_timestamp);
             numberedMock.Setup(m => m.NewIndex).Returns(10);
 
@@ -40,7 +40,7 @@ namespace OsmoVideoRenamer.UnitTests.File.VideoFiles.Numbered
             file.FileInfo.Should().BeSameAs(fileInfoMock.Object);
             file.Name.Should().Be("DJI_20240315123456_0007_D.MP4");
             file.FileExtension.Should().Be(".MP4");
-            file.SequenceNumber.Should().Be(7);
+            file.SequenceNumber.Should().Be(42);
             file.CaptureTimestamp.Should().Be(_timestamp);
         }
     }
