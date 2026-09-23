@@ -49,6 +49,11 @@ two cards mixed together, or the camera numbering was reset) it stops and asks y
 the files into separate directories. If the timestamps disagree with the counter order it
 logs a warning and keeps the counter order.
 
+The prefix and suffix must produce a plain file name: they cannot contain a path separator
+or any character your operating system forbids in file names (Windows forbids more than
+macOS and Linux do), and `--digit-count` cannot exceed 10. Either mistake stops the run
+before anything is renamed.
+
 Run with `--dry-run` first to see the plan without changing anything.
 
 ## Example
