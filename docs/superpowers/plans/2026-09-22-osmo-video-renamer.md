@@ -3925,6 +3925,10 @@ Given a directory, the tool:
   name, so `DJI_20240315123456_0007_D.LRF` becomes `Trip - 001.LRF` alongside `Trip - 001.MP4`;
 - leaves photos (`.JPG`, `.DNG`) and every other file alone.
 
+Only files directly inside the given directory are considered; sub-directories are not
+searched. Run the tool once per folder, for example once per `DJI_00n` folder copied from
+the card.
+
 Before anything is renamed it checks that no new name is used twice or already exists in
 the directory. If one does, nothing is renamed. If a counter value appears twice (files from
 two cards mixed together, or the camera numbering was reset) it stops and asks you to split
@@ -3943,6 +3947,8 @@ Run with `--dry-run` first to see the plan without changing anything.
 2: DJI_20240315120500_0002_D.MP4 -> Trip - 002.MP4
     DJI_20240315120500_0002_D.LRF -> Trip - 002.LRF
 ```
+
+Companion lines are printed in the order the files appear in the directory, so the `.LRF` and `.WAV` lines may swap.
 ````
 
 - [x] **Step 2: Build a scratch directory of fake DJI files**
