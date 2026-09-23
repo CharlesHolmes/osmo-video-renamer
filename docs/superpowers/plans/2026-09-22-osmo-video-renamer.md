@@ -2533,6 +2533,24 @@ namespace OsmoVideoRenamer.UnitTests.File
         }
 
         [TestMethod]
+        [DataRow("../", null)]
+        [DataRow(null, "/../out")]
+        [DataRow("bad\0name", null)]
+        public void FileRename_ShouldThrowIfPrefixOrSuffixDoesNotProduceAPlainFileName(string? prefix, string? suffix)
+        {
+            var input = GetMockedInput(3);
+            var rename = CreateFileRename();
+
+            Action act = () => rename.GetRenamedFiles(input, _allFiles, prefix, suffix, null);
+
+            act.Should().ThrowExactly<ArgumentException>().WithMessage("*plain file name*");
+            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+            _renamedVideoFactoryMock.VerifyNoOtherCalls();
+            _renamedCompanionFactoryMock.VerifyNoOtherCalls();
+            _companionFinderMock.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
         public void FileRename_ShouldRenameCompanionsToMatchTheirVideo()
         {
             var input = GetMockedInput(2);
@@ -2708,11 +2726,26 @@ namespace OsmoVideoRenamer.File
         {
             string numberFormat = "D" + digits.ToString(CultureInfo.InvariantCulture);
             string newBaseName = prefix + file.NewIndex.ToString(numberFormat, CultureInfo.InvariantCulture) + suffix;
+            VerifyIsPlainFileName(newBaseName);
             List<IRenamedCompanionFile> companions = _companionFileFinder
                 .GetCompanions(file, allFiles)
                 .Select(companion => _renamedCompanionFileFactory.Create(newBaseName + companion.FileExtension, companion))
                 .ToList();
             return _renamedVideoFileFactory.Create(newBaseName + file.FileExtension, companions, file);
+        }
+
+        private void VerifyIsPlainFileName(string newBaseName)
+        {
+            bool containsSeparator = Path.GetFileName(newBaseName) != newBaseName;
+            bool containsInvalidCharacter = newBaseName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0;
+            if (containsSeparator || containsInvalidCharacter)
+            {
+                _logger.LogCritical(
+                    "Cannot use the new base name {newBaseName} because it is not a plain file name; check the prefix and suffix.",
+                    newBaseName);
+                throw new ArgumentException(
+                    $"The prefix and suffix must produce a plain file name, but '{newBaseName}' contains a path separator or a character that is not allowed in file names.");
+            }
         }
 
         private int GetDigitCount(int? digitCount, int maxNewIndex)
@@ -2745,7 +2778,7 @@ namespace OsmoVideoRenamer.File
 - [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~FileRenameTests"`
-Expected: PASS, 11 tests.
+Expected: PASS, 14 tests.
 
 - [x] **Step 5: Commit**
 
@@ -3867,7 +3900,7 @@ Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQ
 Expected: PASS, 15 tests (13 data rows + 2).
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test`
-Expected: PASS, 107 tests, `Failed: 0`.
+Expected: PASS, 110 tests, `Failed: 0`.
 
 - [x] **Step 5: Run the real program's help**
 

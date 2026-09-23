@@ -55,11 +55,26 @@ namespace OsmoVideoRenamer.File
         {
             string numberFormat = "D" + digits.ToString(CultureInfo.InvariantCulture);
             string newBaseName = prefix + file.NewIndex.ToString(numberFormat, CultureInfo.InvariantCulture) + suffix;
+            VerifyIsPlainFileName(newBaseName);
             List<IRenamedCompanionFile> companions = _companionFileFinder
                 .GetCompanions(file, allFiles)
                 .Select(companion => _renamedCompanionFileFactory.Create(newBaseName + companion.FileExtension, companion))
                 .ToList();
             return _renamedVideoFileFactory.Create(newBaseName + file.FileExtension, companions, file);
+        }
+
+        private void VerifyIsPlainFileName(string newBaseName)
+        {
+            bool containsSeparator = Path.GetFileName(newBaseName) != newBaseName;
+            bool containsInvalidCharacter = newBaseName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0;
+            if (containsSeparator || containsInvalidCharacter)
+            {
+                _logger.LogCritical(
+                    "Cannot use the new base name {newBaseName} because it is not a plain file name; check the prefix and suffix.",
+                    newBaseName);
+                throw new ArgumentException(
+                    $"The prefix and suffix must produce a plain file name, but '{newBaseName}' contains a path separator or a character that is not allowed in file names.");
+            }
         }
 
         private int GetDigitCount(int? digitCount, int maxNewIndex)
