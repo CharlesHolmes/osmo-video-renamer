@@ -117,7 +117,8 @@ Videos are ordered by counter (sequence number), ascending. That is the sole sor
   the GoPro tool's duplicate check and prevents silently interleaving two sessions.
 - Walking the videos in counter order, if any video's timestamp is earlier than the
   previous video's timestamp, a warning is logged ("timestamps are not in sequence
-  order; the camera clock may have changed or the time zone may have been adjusted").
+  order; the camera clock may have changed, the time zone may have been adjusted, or
+  files from more than one card may be mixed together").
   Equal timestamps, which split segments may share, do not trigger it. The run
   continues in counter order.
 
@@ -134,7 +135,9 @@ Digit count: `--digit-count` when given, otherwise the number of decimal digits 
 largest new index, computed as the length of its decimal string so that an index of 0
 yields one digit (the GoPro tool's base-10 logarithm is not used because it fails for
 0). If `--digit-count` is smaller than that, the run aborts with an
-`ArgumentOutOfRangeException` (same rule and message shape as the GoPro tool).
+`ArgumentOutOfRangeException` (same rule and message shape as the GoPro tool). A
+`--digit-count` above 10 also aborts with an `ArgumentOutOfRangeException`: no index can
+have more digits than `int.MaxValue`, and a larger count only produces unusable names.
 
 The prefix and suffix must produce a plain file name. If the computed base name contains a
 path separator (so that `Path.GetFileName` would change it) or any character that the
@@ -236,7 +239,7 @@ with three additions: `File.Naming`, `File.DirectoryFiles`, `File.CompanionFiles
 | Repeated counter value | `ArgumentException` from `FileSort` (logged Critical) |
 | Negative `--starting-number` | `ArgumentOutOfRangeException` from `FileSort` (logged Critical) |
 | Timestamp earlier than the previous one in counter order | Warning logged, run continues |
-| `--digit-count` too small | `ArgumentOutOfRangeException` from `FileRename` (logged Critical) |
+| `--digit-count` below the required digits or above 10 | `ArgumentOutOfRangeException` from `FileRename` (logged Critical) |
 | Prefix or suffix produces a path or an invalid file name | `ArgumentException` from `FileRename` (logged Critical) |
 | Planned name duplicated or already present | `IOException` from `RenameCollisionChecker` (logged Critical), nothing renamed |
 | `MoveTo` fails mid-run | Exception propagates; files already moved stay moved (same as GoPro) |
@@ -257,7 +260,7 @@ with three additions: `File.Naming`, `File.DirectoryFiles`, `File.CompanionFiles
   counter aborts; custom starting number; zero starting number allowed; negative
   starting number aborts.
 - `FileRename` tests cover the GoPro cases (prefix, suffix, both, neither, digit count
-  given, auto-padded, too small) plus an index of 0 padding to one digit, companions
+  given, auto-padded, too small, above 10) plus an index of 0 padding to one digit, companions
   receiving the same base name and their own extension, empty input, and a prefix or
   suffix that contains a path separator or an invalid file-name character.
 - `CompanionFileFinder` tests cover: `.LRF` and `.WAV` found; case-insensitive base name

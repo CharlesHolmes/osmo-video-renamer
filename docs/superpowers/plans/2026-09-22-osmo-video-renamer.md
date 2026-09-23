@@ -2078,6 +2078,18 @@ namespace OsmoVideoRenamer.UnitTests.Logging
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 times);
         }
+
+        public static void VerifyLoggedMessageContaining<T>(this Mock<ILogger<T>> logger, LogLevel level, string fragment, Times times)
+        {
+            logger.Verify(
+                m => m.Log(
+                    level,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((@object, @type) => @type.Name == "FormattedLogValues" && (@object.ToString() ?? string.Empty).Contains(fragment)),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                times);
+        }
     }
 }
 ```
@@ -2178,7 +2190,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             var result = sort.GetOrderedFiles([file2, file1], null);
 
             result.Should().Equal(numbered1, numbered2);
-            _loggerMock.VerifyLogged(LogLevel.Warning, Times.Once());
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Warning, "files from more than one card may be mixed together", Times.Once());
         }
 
         [TestMethod]
@@ -2227,7 +2239,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => sort.GetOrderedFiles([file1, file2], null);
 
             act.Should().ThrowExactly<ArgumentException>().WithMessage("*3*");
-            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Critical, "Sequence number(s) 3 appear more than once", Times.Once());
             _numberedFactoryMock.VerifyNoOtherCalls();
         }
 
@@ -2351,7 +2363,7 @@ namespace OsmoVideoRenamer.File
                 if (ordered[i].CaptureTimestamp < ordered[i - 1].CaptureTimestamp)
                 {
                     _logger.LogWarning(
-                        "Timestamps are not in sequence order ({later} was recorded after {earlier} but has an earlier timestamp); the camera clock may have changed or the time zone may have been adjusted. Files are ordered by sequence number.",
+                        "Timestamps are not in sequence order ({later} was recorded after {earlier} but has an earlier timestamp); the camera clock may have changed, the time zone may have been adjusted, or files from more than one card may be mixed together. Files are ordered by sequence number.",
                         ordered[i].Name,
                         ordered[i - 1].Name);
                     return;
@@ -2527,7 +2539,21 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => rename.GetRenamedFiles(input, _allFiles, null, null, 1);
 
             act.Should().ThrowExactly<ArgumentOutOfRangeException>();
-            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Critical, "Cannot use provided digit count 1 because", Times.Once());
+            _renamedVideoFactoryMock.VerifyNoOtherCalls();
+            _renamedCompanionFactoryMock.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
+        public void FileRename_ShouldThrowIfSpecifiedDigitsTooHigh()
+        {
+            var input = GetMockedInput(3);
+            var rename = CreateFileRename();
+
+            Action act = () => rename.GetRenamedFiles(input, _allFiles, null, null, 11);
+
+            act.Should().ThrowExactly<ArgumentOutOfRangeException>().WithMessage("*at most 10*");
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Critical, "greater than the maximum of 10", Times.Once());
             _renamedVideoFactoryMock.VerifyNoOtherCalls();
             _renamedCompanionFactoryMock.VerifyNoOtherCalls();
         }
@@ -2544,7 +2570,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => rename.GetRenamedFiles(input, _allFiles, prefix, suffix, null);
 
             act.Should().ThrowExactly<ArgumentException>().WithMessage("*plain file name*");
-            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Critical, "is not a plain file name", Times.Once());
             _renamedVideoFactoryMock.VerifyNoOtherCalls();
             _renamedCompanionFactoryMock.VerifyNoOtherCalls();
             _companionFinderMock.VerifyNoOtherCalls();
@@ -2686,6 +2712,9 @@ namespace OsmoVideoRenamer.File
         private readonly IRenamedCompanionFileFactory _renamedCompanionFileFactory;
         private readonly ICompanionFileFinder _companionFileFinder;
 
+        // No file index can have more digits than int.MaxValue, and a larger count only produces unusable names.
+        private const int MAX_DIGIT_COUNT = 10;
+
         public FileRename(
             ILogger<FileRename> logger,
             IRenamedVideoFileFactory renamedVideoFileFactory,
@@ -2768,6 +2797,17 @@ namespace OsmoVideoRenamer.File
                     $"Digit count must be at least the number of digits in the largest renamed file index, which is {requiredDigits}");
             }
 
+            if (digitCount.Value > MAX_DIGIT_COUNT)
+            {
+                _logger.LogCritical(
+                    "Cannot use provided digit count {digitCount} because it is greater than the maximum of {maxDigitCount}.",
+                    digitCount.Value,
+                    MAX_DIGIT_COUNT);
+                throw new ArgumentOutOfRangeException(
+                    nameof(digitCount),
+                    $"Digit count must be at most {MAX_DIGIT_COUNT}");
+            }
+
             _logger.LogInformation("Verified that digit count is large enough to accommodate maximum file index.");
             return digitCount.Value;
         }
@@ -2778,7 +2818,7 @@ namespace OsmoVideoRenamer.File
 - [x] **Step 4: Run the tests to verify they pass**
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQualifiedName~FileRenameTests"`
-Expected: PASS, 14 tests.
+Expected: PASS, 15 tests.
 
 - [x] **Step 5: Commit**
 
@@ -2851,7 +2891,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => checker.VerifyNoCollisions(renamed, existing);
 
             act.Should().ThrowExactly<IOException>().WithMessage("*Trip - 002.MP4*");
-            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Critical, "already exist in the directory: Trip - 002.MP4", Times.Once());
         }
 
         [TestMethod]
@@ -3900,7 +3940,7 @@ Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test --filter "FullyQ
 Expected: PASS, 15 tests (13 data rows + 2).
 
 Run: `cd /Users/charlie/repos/osmo-video-renamer && dotnet test`
-Expected: PASS, 110 tests, `Failed: 0`.
+Expected: PASS, 111 tests, `Failed: 0`.
 
 - [x] **Step 5: Run the real program's help**
 
