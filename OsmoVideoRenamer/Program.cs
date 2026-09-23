@@ -1,10 +1,20 @@
+using Cocona;
+using OsmoVideoRenamer.Configuration;
+using System.Diagnostics.CodeAnalysis;
+
 namespace OsmoVideoRenamer
 {
+    [ExcludeFromCodeCoverage]
     internal static class Program
     {
         static void Main(string[] args)
         {
-            // Placeholder so the project builds; replaced in Task 17 once the Cocona configuration exists.
+            var builder = CoconaApp.CreateBuilder(args);
+            ServiceConfiguration.Configure(builder.Services);
+            var app = builder.Build();
+            FilterConfiguration.RegisterAllFilters(app);
+            CommandConfiguration.RegisterAllCommands(app);
+            app.Run();
         }
     }
 }
