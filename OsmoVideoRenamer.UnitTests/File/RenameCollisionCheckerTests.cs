@@ -47,7 +47,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => checker.VerifyNoCollisions(renamed, existing);
 
             act.Should().ThrowExactly<IOException>().WithMessage("*Trip - 002.MP4*");
-            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+            _loggerMock.VerifyLoggedMessageContaining(LogLevel.Critical, "already exist in the directory: Trip - 002.MP4", Times.Once());
         }
 
         [TestMethod]

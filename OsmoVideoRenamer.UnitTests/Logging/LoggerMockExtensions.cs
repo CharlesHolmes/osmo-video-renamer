@@ -20,5 +20,17 @@ namespace OsmoVideoRenamer.UnitTests.Logging
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
                 times);
         }
+
+        public static void VerifyLoggedMessageContaining<T>(this Mock<ILogger<T>> logger, LogLevel level, string fragment, Times times)
+        {
+            logger.Verify(
+                m => m.Log(
+                    level,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((@object, @type) => @type.Name == "FormattedLogValues" && (@object.ToString() ?? string.Empty).Contains(fragment)),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                times);
+        }
     }
 }
