@@ -43,7 +43,7 @@ namespace OsmoVideoRenamer
             [Option(Description = "Directory where the Osmo videos are stored")] string fileLocation,
             [Option(Description = "Text that should appear before each file's number")] string? prefix,
             [Option(Description = "Text that should appear after each file's number")] string? suffix,
-            [Option(Description = "What number the renamed files should start at")] int? startingNumber,
+            [Option(Description = "What number the renamed files should start at (default 1)")] int? startingNumber,
             [Option(Description = "The number of digits to include in each file number")] int? digitCount,
             [Option(Description = "Print a list of the files to be renamed, but do not rename them")] bool dryRun = false)
         {
