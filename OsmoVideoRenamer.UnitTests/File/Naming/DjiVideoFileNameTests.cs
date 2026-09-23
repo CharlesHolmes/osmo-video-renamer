@@ -35,6 +35,24 @@ namespace OsmoVideoRenamer.UnitTests.File.Naming
         }
 
         [TestMethod]
+        public void TryParse_ShouldAcceptLeapDay()
+        {
+            bool parsed = DjiVideoFileName.TryParse("DJI_20240229123456_0007_D.MP4", out DjiVideoFileName? result);
+
+            parsed.Should().BeTrue();
+            result!.CaptureTimestamp.Should().Be(new DateTime(2024, 2, 29, 12, 34, 56));
+        }
+
+        [TestMethod]
+        public void TryParse_ShouldReturnFalseForNull()
+        {
+            bool parsed = DjiVideoFileName.TryParse(null, out DjiVideoFileName? result);
+
+            parsed.Should().BeFalse();
+            result.Should().BeNull();
+        }
+
+        [TestMethod]
         [DataRow("GH010001.mp4")]
         [DataRow("DJX_20240315123456_0007_D.MP4")]
         [DataRow("DJI_2024031512345_0007_D.MP4")]
@@ -53,6 +71,7 @@ namespace OsmoVideoRenamer.UnitTests.File.Naming
         [DataRow("DJI_20240315243456_0007_D.MP4")]
         [DataRow("notes.txt")]
         [DataRow("")]
+        [DataRow("DJI_20240315123456_0007_D.MP4\n")]
         public void TryParse_ShouldRejectNonVideoNames(string fileName)
         {
             bool parsed = DjiVideoFileName.TryParse(fileName, out DjiVideoFileName? result);
