@@ -18,7 +18,7 @@
 - Repository root is `/Users/charlie/repos/osmo-video-renamer`; every command below assumes `cd /Users/charlie/repos/osmo-video-renamer` first (the shell's working directory does not persist between commands).
 - Follow @superpowers:test-driven-development: write the test, watch it fail (a compile error because the type does not exist yet counts as the failing run), write the minimal production code, watch it pass, commit.
 - Python one-offs on this machine must be run as `uv run python3 ...`; plain `python3` is blocked by a hook.
-- Git identity is already configured locally. End every commit message with the trailer line `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`.
+- Git identity is already configured locally. End every commit message with the `Co-Authored-By:` attribution trailer your environment specifies for the model doing the work (the commit commands below show the Fable trailer; substitute your own model's name if your instructions give a different one).
 - Namespaces mirror the GoPro project. Note that `OsmoVideoRenamer.File` and `OsmoVideoRenamer.Directory` shadow `System.IO.File` / `System.IO.Directory` inside those namespaces; the code never uses those static classes, only `Path`, which is not shadowed.
 - Test files use three global usings (`FluentAssertions`, `Microsoft.VisualStudio.TestTools.UnitTesting`, `Moq`) declared once in `GlobalUsings.cs`; do not repeat them per file.
 - Expected test output lines look like `Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7`. "Expected: PASS" below means `Failed: 0` for the filtered run.
