@@ -60,6 +60,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => checker.VerifyNoCollisions(renamed, existing);
 
             act.Should().ThrowExactly<IOException>().WithMessage("*Trip - 001.LRF*");
+            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
         }
 
         [TestMethod]
@@ -76,6 +77,21 @@ namespace OsmoVideoRenamer.UnitTests.File
         }
 
         [TestMethod]
+        public void Checker_ShouldReportBothDuplicateAndExistingNamesInOneRun()
+        {
+            var renamed = new[] { Renamed("Trip - 001.MP4"), Renamed("Trip - 001.MP4"), Renamed("Trip - 002.MP4") };
+            var existing = Existing("DJI_20240315120000_0001_D.MP4", "Trip - 002.MP4");
+            var checker = new RenameCollisionChecker(_loggerMock.Object);
+
+            Action act = () => checker.VerifyNoCollisions(renamed, existing);
+
+            act.Should().ThrowExactly<IOException>()
+                .WithMessage("*more than once: Trip - 001.MP4*")
+                .WithMessage("*already exist in the directory: Trip - 002.MP4*");
+            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
+        }
+
+        [TestMethod]
         public void Checker_ShouldCompareNamesCaseInsensitively()
         {
             var renamed = new[] { Renamed("Trip - 001.MP4") };
@@ -85,6 +101,7 @@ namespace OsmoVideoRenamer.UnitTests.File
             Action act = () => checker.VerifyNoCollisions(renamed, existing);
 
             act.Should().ThrowExactly<IOException>();
+            _loggerMock.VerifyLogged(LogLevel.Critical, Times.Once());
         }
 
         [TestMethod]
